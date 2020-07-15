@@ -1,5 +1,6 @@
-import { Request } from './request.js'
+// import { Request } from './request.js'
+const request = require('./request.js')
 
-export const Mk = {
-    request = new Request()
+module.exports = {
+    request : new request.Request()
 }

@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/Leoocast/Meraki#readme",
   "dependencies": {
+    "rollup-plugin-uglify": "^6.0.4",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
+  },
+  "devDependencies": {
+    "babel-plugin-add-module-exports": "^1.0.2"
   }
 }

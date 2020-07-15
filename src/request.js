@@ -1,4 +1,4 @@
-import { FetchError } from './error.js'
+const { FetchError } = require('./error.js')
 
 export class Request {
 
@@ -60,8 +60,6 @@ export class Request {
                         }
                     } 
                     else {
-                        //Quitar esta validación en el public deploy, pasar esto a la branch de Medithor nada más.
-                        //Si es public retornar el resultado sin hacer validación, si es medithor debería ser res.d 
                         if(res.d === undefined)
                             throw new Error(`GET request cannot have 'data' property`)
                         else
@@ -75,10 +73,8 @@ export class Request {
                         throw new FetchError(url, ex, `Add the property '${ex.message.split("'")[1]}' to your data`)
                     else if(ex.message.includes('json format'))
                         throw new FetchError(url, ex, `Verify that you are sending a json object`)
-                    //Igual, esto solo va en la branch de Medithor
                     else if(ex.message.includes('GET'))
                         throw new FetchError(url, ex, `You must remove 'data' in the collection object if is a GET request`)
-                    //Hasta aquí ↑    
                     else if(url === undefined)
                         throw new FetchError("Oops! You haven't set any URL", {message: 'Missing URL to fetch'}, `Set an URL in your request`)
                     else
