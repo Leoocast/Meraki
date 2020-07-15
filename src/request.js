@@ -12,6 +12,10 @@ export class Request {
         }
     }
 
+    setCofig(config){
+        this.config = config
+    }
+
     async fetch_GET(url){
         
         try {

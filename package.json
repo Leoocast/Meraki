@@ -1,0 +1,23 @@
+{
+  "name": "meraki",
+  "version": "1.0.0",
+  "description": "JS Library for asynchronous calls with friendly error control.",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leoocast/Meraki.git"
+  },
+  "author": "Leo Castellanos (Leoocast/Leocast)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Leoocast/Meraki/issues"
+  },
+  "homepage": "https://github.com/Leoocast/Meraki#readme",
+  "dependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
