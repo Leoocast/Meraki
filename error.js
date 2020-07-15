@@ -24,11 +24,11 @@ class CustomError extends Error {
 }
 
 export class FetchError extends CustomError{
-    constructor(originalError = null, fixTip = '', message = ''){
+    constructor(url, originalError = null, fixTip = '', message = ''){
         super(message)
         this.name = "⚠️FetchError"
         this.original = originalError
-        this.customMessage = ` An error has occurred on the request: ${this.original != null ? this.original.message : ''}  \n`
+        this.customMessage = ` An error has occurred on the request: ${this.original != null ? this.original.message : ''}  \n At -> ${url}\n`
         this.fixTip = fixTip
     }
 }
