@@ -12,16 +12,18 @@ export class Request {
         }
     }
 
-    async fetch(url, data = null){
+    async fetch_GET(url){
         
         try {
-            return await fetch(url)
+            return fetch(url)
                 .then((response) => {
-                    this.config.body = ''
-                    return response.json()
+                    if(response.status === 200)
+                        return response.json()
+                    else if (response.status == 404)
+                        throw new Error("Not found")
                 })
                 .catch( ex => { 
-                    throw new FetchError(ex, 'Is this correct? ' + url)
+                    throw new FetchError(url, {message: 'Service not found'}, 'Is this correct? ' + url)
                 })
         } catch (error) {
             error.consoleError()
@@ -30,7 +32,7 @@ export class Request {
 
     }
 
-    async fetchService(url, data = null){
+    async fetch_POST(url, data = null){
         
         try {
             if(data != null)
@@ -41,7 +43,7 @@ export class Request {
                 .then(res => {
                    
                     this.config.body = ''
-                    
+
                     if(res.Message){
                         if(res.Message.includes('Falta un valor') ||
                            res.Message.includes('issing')){
@@ -53,17 +55,28 @@ export class Request {
                             throw new Error(`The sent object has not json format`)
                         }
                     } 
-                    else
-                        return res.d
+                    else {
+                        //Quitar esta validación en el public deploy, pasar esto a la branch de Medithor nada más.
+                        //Si es public retornar el resultado sin hacer validación, si es medithor debería ser res.d 
+                        if(res.d === undefined)
+                            throw new Error(`GET request cannot have 'data' property`)
+                        else
+                            return res.d
+                    }
                 })
                 .catch( ex => { 
-                
                     if(ex.message.includes('Request with GET/HEAD'))
                         throw new FetchError(url, ex, 'Remove body from the request or change the request to post')
                     else if(ex.message.includes('Missing value'))
                         throw new FetchError(url, ex, `Add the property '${ex.message.split("'")[1]}' to your data`)
                     else if(ex.message.includes('json format'))
                         throw new FetchError(url, ex, `Verify that you are sending a json object`)
+                    //Igual, esto solo va en la branch de Medithor
+                    else if(ex.message.includes('GET'))
+                        throw new FetchError(url, ex, `You must remove 'data' in the collection object if is a GET request`)
+                    //Hasta aquí ↑    
+                    else if(url === undefined)
+                        throw new FetchError("Oops! You haven't set any URL", {message: 'Missing URL to fetch'}, `Set an URL in your request`)
                     else
                         throw new FetchError(url, {message: 'Service not found'}, 'Is this correct? ' + url)
                 })
@@ -71,15 +84,18 @@ export class Request {
             error.consoleError()
             return error
         }
-
     }
 
-    async fetchServiceAll(colection){
+    async fetchAll(colection){
         return Promise.all(
-            colection.map( r => this.fetchService(r.url, r.data) )
-        ).then(results => {
-            return results
-        })
+            colection.map( r => 
+                r.data !== undefined
+                ?
+                this.fetch_POST(r.url, r.data)
+                :
+                this.fetch_GET(r.url)
+                )
+        ).then(results => results)
         .catch( err => {
             err.consoleError()
             return null
